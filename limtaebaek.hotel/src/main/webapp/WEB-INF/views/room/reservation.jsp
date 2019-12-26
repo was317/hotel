@@ -88,6 +88,16 @@ input[type="checkbox"]:checked+label:BEFORE {
 .table {
 	border: 1px solid #dddddd;
 }
+.td1{
+	width:600px;
+}
+.td2{
+	width:200px;
+}
+.td3{
+	width:150px;
+}
+  
 
 /* DivTable */
 .divTable {
@@ -411,13 +421,13 @@ $(function() {
 							<div class="thumb-isotope">
 								<table class="table table-hover">
 									<tr id="a${list.roomNum }">
-										<td class="confirmModalButton">
+										<td class="confirmModalButton td1">
 											<img width="300" height="200" src="<c:url value="/img/${list.roomImage1}"/>"></td>
 
-										<td class="confirmModalButton" style="vertical-align: middle;">
-											<p>
-												- <span class="txt0">${list.roomType }</span>
-											</p>
+										<td class="confirmModalButton td2" style="vertical-align: middle;">
+											<h4>
+												● <span class="txt0">${list.roomType }</span>
+											</h4>
 											<p>
 												<c:forEach var="options" items="${list.options}">
 													<c:choose>
@@ -438,12 +448,12 @@ $(function() {
 												</c:forEach>
 											</p>
 										</td>
-										<td class="confirmModalButton" style="vertical-align: middle;">
+										<td class="confirmModalButton td3" style="vertical-align: middle;">
 											<span class="txt3">${list.roomPrice }</span>원<br>기준 <span
 											class="txt4">${list.guests }</span> 명
 										</td>
 
-										<td style="vertical-align: middle;"><button
+										<td class="td4" style="vertical-align: middle;"><button
 												class="btn btn-default bookingBtn" type="button"
 												style="width: 150px; height: 150px;">예약</button></td>
 									</tr>
@@ -458,12 +468,12 @@ $(function() {
 
 				<div class="modal fade" id="confirmModa1">
 					<div class="modal-dialog"
-						style="max-width: 100%; width: auto; display: table;">
+						style="max-width: 90%; width: auto; display: table;">
 						<div class="modal-content">
 							<!-- remote call이 되는영역 -->
 
 							<div class="modal-dialog"
-								style="max-width: 70%; width: 70%; display: table;">
+								style="width: 80%; display: table;">
 
 								<div class="panel panel-default">
 									<div class="container">
