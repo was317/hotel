@@ -7,7 +7,7 @@
 /*네비*/
 .navi {
 	text-align: center;
-	width:35%;
+	width:40%;
 	margin: 0px auto;
 }
 

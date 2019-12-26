@@ -156,7 +156,7 @@ public class MypageController {
 		return inquiry;
 	}
 	
-	//답변 보기 페이지
+	//답변 모달 불러오기
 	@ResponseBody
 	@RequestMapping("/getAnswer")
 	public InquiryComment getAnswer(Model model, Inquiry inquiry, User user) {
@@ -165,12 +165,4 @@ public class MypageController {
 		myInqService.getInquiryAnswer(inquiry.getInqNum());
 		return myInqService.getInquiryAnswer(inquiry.getInqNum());
 	}
-	
-	//답변 모달 불러오기
-/*	@Transactional
-	@RequestMapping("/myInqAns")
-	public String myInqAns(Model model, Inquiry inquiry) throws Exception {
-		model.addAttribute("inq", myInqService.getInquiryAnswer(inquiry.getInqNum()));
-		return "mypage/myInqAns";
-	}*/
 }

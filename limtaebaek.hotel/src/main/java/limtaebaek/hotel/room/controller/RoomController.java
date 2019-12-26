@@ -3,6 +3,7 @@ package limtaebaek.hotel.room.controller;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import limtaebaek.hotel.room.service.RoomService;
 public class RoomController {
 	@Value("${room_uploadDir}") private String uploadDir;
 	@Autowired private RoomService roomService;
-	
 
    @Transactional
    @ResponseBody
@@ -45,23 +45,18 @@ public class RoomController {
 	}
 	@Transactional
 	@RequestMapping("/roomReservation")
-	public String roomReservation(Model model) {
-	  model.addAttribute("roomList", roomService.getRooms());   
-		return "room/reservation";
+	public String roomReservation(Model model, @RequestParam(value="adult",required=false) String adult,
+										@RequestParam(value="kid",required=false) String kid,
+										@RequestParam(value="checkIn",required=false) Date checkIn,
+										@RequestParam(value="checkOut",required=false) Date checkOut) {
+	  model.addAttribute("roomList", roomService.getRooms());  
+	  model.addAttribute("adult", adult); 
+	  model.addAttribute("kid", kid); 
+	  model.addAttribute("checkIn", checkIn); 
+	  model.addAttribute("checkOut", checkOut); 
+	  
+	  return "room/reservation";
 	}
-	
-/*	@Transactional
-	@RequestMapping("/roomData")
-	public String roomData(Model model){
-		model.addAttribute("roomdata", roomService.getRoom(roomNum));
-	}
-	*/
-/*	@RequestMapping("/myInquiry")
-	public String myInquiry(Model model, HttpServletRequest request) throws Exception {
-		int inqNum = Integer.parseInt(request.getParameter("inqNumber"));
-		model.addAttribute("inq", myInqService.getInquiry(inqNum));
-		return "mypage/myInq";
-	}*/
 
 	@RequestMapping("/roomData")
 	public String roomData(@RequestParam("roomNum") int roomNum , Model model) throws Exception{
@@ -79,8 +74,6 @@ public class RoomController {
 		roomDate.setOption(roomService.getOption(roomDate));
 		return roomDate;
 	}
-	
-
 	
 	@Transactional
 	@RequestMapping("/roomAdd")
@@ -110,8 +103,6 @@ public class RoomController {
 		return roomService.join(room,  options);
 	}
 	
-	//111111111111111
-	
 	@RequestMapping("/addImage")
 	@ResponseBody
 	public boolean upload(MultipartFile file, HttpServletRequest request){
@@ -131,31 +122,18 @@ public class RoomController {
 		uploadFile.transferTo(new File(fileFullName));
 	}
 
-	//111111111111111
-	
 	@Transactional
 	@ResponseBody
 	@RequestMapping("/delete")
-	public  boolean delRoom(int roomNum) {
-			roomService.delRoom(roomNum);
-			return true;
-		 
+	public boolean delRoom(int roomNum) {
+		roomService.delRoom(roomNum);
+		return true;
 	}
 	
 	@Transactional
 	@ResponseBody
 	@RequestMapping("/updateRoom")
-	public  boolean updateRoom(Room room) {
-			System.out.println(room);
-			System.out.println(room);
-			System.out.println(room);
-			return  roomService.updateRoom(room);
-			
-		 
+	public boolean updateRoom(Room room) {
+		return  roomService.updateRoom(room);
 	}
-	
-	
-	
-	
-
 }

@@ -203,6 +203,25 @@ $(function(){
 	$("#adult").val("선택");
 	$("#kid").val("0");
 	
+	$(".searchBtn").click(function () {
+ 		if($("#dateForm").val() ==""){
+			alert("체크인/체크아웃을 선택해 주세요");
+			return;
+		}
+		if($("#adult").val() =="선택"){
+			alert("예약인원을 선택해 주세요");
+			return;
+		}
+		
+		var checkIn = $('#dateForm').val().substr(0,10);
+		var checkOut = $('#dateForm').val().substr(13,22);
+		var adult = $("#adult").val();
+		var kid = $("#kid").val();
+
+		location.href = "/hotel/room/roomReservation?checkIn=" + checkIn +
+							"&checkOut=" + checkOut + "&adult=" + adult + "&kid=" +kid;
+	});
+	
 	$.ajax({
 		url:"room/roomList",
 		method:"POST",
@@ -330,7 +349,8 @@ $(function(){
 									<option>2</option>
 									<option>3</option>
 								</select>
-								<button type="submit" class="btn btn-default searchBtn">검색</button>
+					
+								<button type="button" class="btn btn-default searchBtn" style="position: absolute; margin-top: 16px;">검색</button>
 							</div>
 				      </form>
 				   	</div>
@@ -500,7 +520,6 @@ $(function(){
 							</div>
 						</div>
 					</div>
-
 					<button type="button" class="btn btn-default modalbtn"
 						data-dismiss="modal">확인</button>
 

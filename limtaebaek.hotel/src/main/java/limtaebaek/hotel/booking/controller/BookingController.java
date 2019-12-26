@@ -36,7 +36,6 @@ public class BookingController {
 	@Autowired private BookingService bookingService;
 	@Autowired private RoomService roomService;
 	@Autowired private PointService pointService;
-	@Autowired private UserService userService;
 	
 	//예약정보 기입 페이지
 	@Transactional

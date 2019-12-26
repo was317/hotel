@@ -97,8 +97,13 @@ input[type="checkbox"]:checked+label:BEFORE {
 .td3{
 	width:150px;
 }
-  
 
+.noResult{
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+}
+ 
 /* DivTable */
 .divTable {
 	display: table;
@@ -141,13 +146,31 @@ var alert = function(msg, type) {
 }
 
 $(document).ready(function() {
-   var checkIn;
-   var checkOut;
-   var minprice;
-   var maxprice;
-   var selectbox;
-   var checkList = Array.apply(null, new Array(4)).map(String.prototype.valueOf,"");
-
+	var adult;
+	var kid;
+	var minprice;
+	var maxprice;
+	var selectbox;
+	var checkList = Array.apply(null, new Array(4)).map(String.prototype.valueOf,"");
+	   
+	if("${adult}"){
+ 		$('#bookingcheckIn').val("${checkIn}");
+ 	    $('#bookingcheckOut').val("${checkOut}");
+		$("#bookingAdult").val("${adult}");
+		$("#bookingKid").val("${kid}");
+		$("#dateForm").val("${checkIn} ~ ${checkOut}");
+		$("#adult").val("${adult}");
+		$("#kid").val("${kid}");
+		adult = $("#adult").val();
+		kid = $("#kid").val();
+		selectbox = parseInt(adult) + parseInt(kid);
+	}
+	else{ 
+		$("#dateForm").val("");
+		$("#adult").val("선택");
+		$("#kid").val("0");
+	}
+	
    // 필터링
 	var $container = $('#isotope-items').isotope({
 		layoutMode: 'fitRows',
@@ -163,11 +186,13 @@ $(document).ready(function() {
 		var minResult = minprice ? parseInt($this.find('.txt3').text()) >= parseInt(minprice) : true;
 		var maxResult = maxprice ? parseInt($this.find('.txt3').text()) <= parseInt(maxprice) : true;
 		var countResult = selectbox ? $this.find('.txt4').text().match( selectbox ) : true;
-
+		
 		return minResult && maxResult && countResult && optionResult;
      }
    });
 
+   noResult();
+	
    //최소금액
    var $min = $('#min').keyup( debounce( function() {
       minprice = parseInt($min.val());
@@ -181,6 +206,7 @@ $(document).ready(function() {
          minprice = maxprice;
       }
       $container.isotope();
+      noResult();
    }) );
 
    //최대금액
@@ -191,6 +217,7 @@ $(document).ready(function() {
       if(maxprice < minprice || $(this).val() == "")
          maxprice = minprice+10000000;
       $container.isotope();
+      noResult();
    }) );
 
    //옵션
@@ -207,6 +234,7 @@ $(document).ready(function() {
          }
       });
       $container.isotope();
+      noResult();
    });
 
    //인원수
@@ -220,6 +248,7 @@ $(document).ready(function() {
    
       selectbox = parseInt(adult) + parseInt(kid);
       $container.isotope();
+      noResult();
    });
    
    // 검색시간조절
@@ -236,6 +265,14 @@ $(document).ready(function() {
           timeout = setTimeout( delayed, threshold );
       };
    }
+   
+ 	//검색 결과없을때 문구
+	function noResult() {
+		if ($container.data('isotope').filteredItems.length > 0) 
+			$('.noResult').hide();
+		else
+			$('.noResult').show();
+	}
 });
 
 function Today(){
@@ -252,11 +289,6 @@ function Today(){
 
 
 $(function() {
-	$("#dateForm").val("");
-	$("#adult").val("선택");
-	$("#kid").val("0");
-	
-	
 	$(".confirmModalButton").click(function() {
 		var roomNumber = $(this).parents().attr('id').substr(1);
 		$("input:checkbox[name=rom]").prop("checked",false);
@@ -414,6 +446,7 @@ $(function() {
 				</div>
 				<!-- 예약검색 폼 끝 -->
 
+
 				<!-- 객실목록 -->
 				<div class="container center-block" id="isotope-items">
 					<c:forEach var="list" items="${roomList}">
@@ -463,15 +496,15 @@ $(function() {
 					</c:forEach>
 				</div>
 				<!-- 객실목록 끝 -->
-
-
-
+				<div class="container noResult">
+					<p>검색결과가 없습니다.</p>
+				</div>
+				
 				<div class="modal fade" id="confirmModa1">
 					<div class="modal-dialog"
 						style="max-width: 90%; width: auto; display: table;">
 						<div class="modal-content">
 							<!-- remote call이 되는영역 -->
-
 							<div class="modal-dialog"
 								style="width: 80%; display: table;">
 
@@ -570,7 +603,6 @@ $(function() {
 																	class="custom-control-label" for="count4">4명</label>
 															</div>
 														</td>
-
 													</tr>
 													<tr>
 														<th>금액</th>
@@ -587,10 +619,8 @@ $(function() {
 										</div>
 									</div>
 								</div>
-
 								<button type="button" class="btn btn-default modalbtn"
 									data-dismiss="modal">확인</button>
-
 							</div>
 						</div>
 					</div>
@@ -604,55 +634,56 @@ $(function() {
 			<input id="bookingcheckIn" name="checkIn" type="hidden" value="">
 			<input id="bookingcheckOut" name="checkOut" type="hidden" value="">
 			<input id="bookingAdult" name="adult" type="hidden" value="">
-			<input id="bookingKid" name="kid" type="hidden" value=""> <input
-				id="bookingRoomType" name="roomType" type="hidden" value="">
+			<input id="bookingKid" name="kid" type="hidden" value="">
+			<input id="bookingRoomType" name="roomType" type="hidden" value="">
 			<input id="bookingRoomPrice" name="roomPrice" type="hidden" value="">
 			<input id="bookingRoomoption" name="optName" type="hidden" value="">
 		</form>
+		
 		<script>
-$(function(){
-   var checkInDate;
-   var checkOutDate;
-   $('#date').daterangepicker({
-       autoUpdateInput: false,
-       "locale": {
-          "format": "YYYY/MM/DD",
-          "separator": " ~ ",
-           "applyLabel": "확인",
-           "cancelLabel": "취소",
-           "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
-           "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월",
-                        "7월", "8월", "9월", "10월", "11월", "12월"],
-           "firstDay": 1,
-           "toLabel": "To"
-       },    
-       "minDate": Today(),   //오늘 날짜
-      
-   },function(start, end) {
-      checkInDate = start.format('YYYY-MM-DD');
-      checkOutDate = end.format('YYYY-MM-DD');
-      //년:checkIn.getFullYear()
-      //월:checkIn.getMonth()
-      //일:checkIn.getDate()
-   });
-   
-   $('#date').on('apply.daterangepicker', function(ev, picker) {
-      var arr1 = checkInDate.split('-');
-      var arr2 = checkInDate.split('-');
-      checkIn = new Date(arr1[0], arr1[1], arr1[2]);
-      checkOut = new Date(arr2[0], arr2[1], arr2[2]);
-      alert('체크인: ' + checkInDate + '\n' + '체크아웃: ' + checkOutDate, "info");
-      $('#dateForm').val(picker.startDate.format('YYYY-MM-DD') + ' ~ ' + picker.endDate.format('YYYY-MM-DD'));
-      $('#bookingcheckIn').val(picker.startDate.format('YYYY-MM-DD'));
-      $('#bookingcheckOut').val(picker.endDate.format('YYYY-MM-DD'));
-   });
-
-   $('#date').on('cancel.daterangepicker', function(ev, picker) {
-      $('#dateForm').val('');
-   });
-     
-});
-</script>
+			$(function(){
+			   var checkInDate;
+			   var checkOutDate;
+			   $('#date').daterangepicker({
+			       autoUpdateInput: false,
+			       "locale": {
+			          "format": "YYYY/MM/DD",
+			          "separator": " ~ ",
+			           "applyLabel": "확인",
+			           "cancelLabel": "취소",
+			           "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+			           "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월",
+			                        "7월", "8월", "9월", "10월", "11월", "12월"],
+			           "firstDay": 1,
+			           "toLabel": "To"
+			       },    
+			       "minDate": Today(),   //오늘 날짜
+			      
+			   },function(start, end) {
+			      checkInDate = start.format('YYYY-MM-DD');
+			      checkOutDate = end.format('YYYY-MM-DD');
+			      //년:checkIn.getFullYear()
+			      //월:checkIn.getMonth()
+			      //일:checkIn.getDate()
+			   });
+			   
+			   $('#date').on('apply.daterangepicker', function(ev, picker) {
+			      var arr1 = checkInDate.split('-');
+			      var arr2 = checkInDate.split('-');
+			      checkIn = new Date(arr1[0], arr1[1], arr1[2]);
+			      checkOut = new Date(arr2[0], arr2[1], arr2[2]);
+			      alert('체크인: ' + checkInDate + '\n' + '체크아웃: ' + checkOutDate, "info");
+			      $('#dateForm').val(picker.startDate.format('YYYY-MM-DD') + ' ~ ' + picker.endDate.format('YYYY-MM-DD'));
+			      $('#bookingcheckIn').val(picker.startDate.format('YYYY-MM-DD'));
+			      $('#bookingcheckOut').val(picker.endDate.format('YYYY-MM-DD'));
+			   });
+			
+			   $('#date').on('cancel.daterangepicker', function(ev, picker) {
+			      $('#dateForm').val('');
+			   });
+			     
+			});
+		</script>
 		<jsp:include page="../common/footer.jsp" />
 	</div>
 </body>
