@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.point.dao.mapper.PointMapper">
+   <resultMap type="point" id="pointMap">
+      <id property="pointNum" column="point_num"/>
+      <result property="pointDate" column="point_date"/>
+      <result property="pointChange" column="point_change"/>
+      <result property="pointContent" column="point_content"/>
+      <result property="userNum" column="user_num" />
+   </resultMap>
+   
+   <insert id="addPoint" parameterType="point" >
+      insert into points values(POINT_SEQ.nextval, sysdate, #{pointChange}, #{pointContent}, #{userNum})
+   </insert>
+   
+   <insert id="delPoint" parameterType="user">
+      insert into points values(POINT_SEQ.nextval, sysdate, (
+         select -sum(point_change)
+         from users u LEFT OUTER JOIN points p
+            ON  u.user_num = p.user_num  
+         where 1 = 1
+             and u.user_num = #{userNum}
+      ), #{pointContent}, #{userNum})
+   </insert>
+   
+   <select id="getMyPointList" parameterType="page" resultMap="pointMap">
+      SELECT * 
+      FROM (SELECT  m.*, FLOOR((ROWNUM - 1)/#{limit} + 1) page 
+            FROM (SELECT * 
+                  FROM points  
+               where user_num = #{searchType.userNum}            
+                  ORDER BY points.USER_NUM DESC) m                                 
+                )                                            
+      WHERE page = #{nowPage}
+   </select>
+   
+   <select id="getMyPointSum" parameterType="int" resultType="int">
+      select NVL(sum(point_change), 0 )
+      from points
+      where user_num = #{userNum}
+   </select>
+   
+   <select id="getMyPointCount" parameterType="user" resultType="int">
+      select count(point_content)
+      from points
+      where user_num = #{userNum}
+   </select>
+</mapper>

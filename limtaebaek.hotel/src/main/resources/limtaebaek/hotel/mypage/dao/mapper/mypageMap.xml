@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.mypage.dao.mapper.MypageMapper">
+   <resultMap type="inquiry" id="inquiryMap">
+      <id property="inqNum" column="INQ_NUM" />
+      <result property="inqTitle" column="INQ_TITLE" />
+      <result property="inqContent" column="INQ_CONTENT" />
+      <result property="inqDate" column="INQ_DATE" />
+      <result property="inqWriter" column="INQ_WRITER" />
+      <result property="inqEmail" column="INQ_EMAIL" />
+      <result property="inqPhone" column="INQ_PHONE" />
+      <result property="status" column="STATUS" />
+      <result property="userNum" column="USER_NUM" />
+      <result property="count" column="COUNT" />
+   </resultMap>
+   
+   <resultMap type="inquiryComment" id="commentMap">
+      <id column="INQ_NUM" property="inqNum"/>
+      <result column="INQ_CMT_CONTENT" property="inqCmtContent"/>
+      <result column="INQ_CMT_DATE" property="inqCmtDate"/>
+   </resultMap>
+   
+	<resultMap type="comment" id="commentMap1">
+		<id property="revNum" column="rev_num"/>
+		<result property="userNum" column="user_num"/>
+		<result property="revTitle" column="rev_title"/>
+		<result property="revContent" column="rev_content"/>
+		<result property="roomType" column="room_type"/>
+		<result property="rate" column="rate"/>
+		<result property="revDate" column="rev_date"/>
+	</resultMap>
+	
+   <resultMap type="booking" id="bookingMap">
+      <id property="bookingNum" column="BOOKING_NUM" />
+      <result property="userNum" column="USER_NUM" />
+      <result property="roomNum" column="ROOM_NUM" />
+      <result property="checkIn" column="CHECK_IN_" />
+      <result property="checkOut" column="CHECK_OUT" />
+      <result property="paytype" column="PAYTYPE" />
+      <result property="payment" column="PAYMENT" />
+      <result property="adult" column="ADULT" />
+      <result property="kid" column="KID" />
+      <result property="userName" column="USER_KORNAME" />
+      <result property="roomType" column="ROOM_TYPE" />
+   </resultMap>
+   
+   <select id="getCount" resultMap="inquiryMap" parameterType="int">
+      select count (*) as count
+      from INQUIRYS
+      where USER_NUM=#{userNum}
+   </select>
+
+   <select id="getInquirys" resultMap="inquiryMap" parameterType="int">
+		select INQ_NUM,INQ_TITLE,INQ_CONTENT,INQ_DATE,INQ_WRITER,INQ_EMAIL,INQ_PHONE,
+		decode(STATUS, 0, '답변 대기', 1,'답변완료') as STATUS, USER_NUM
+		from INQUIRYS 
+		where USER_NUM=#{userNum} order by INQ_NUM DESC
+
+   </select>
+
+   <select id="getInquiry" resultMap="inquiryMap" parameterType="int">
+      select *
+      from INQUIRYS
+      where INQ_NUM=#{inqNum} and USER_NUM=#{userNum}
+   </select>
+   
+   <select id="getComment" resultMap="commentMap" parameterType="comment">
+      select *
+      from INQUIRYS_CMT
+      where INQ_NUM=#{inqNum}
+   </select>
+   
+   <update id="modInquiry" parameterType="inquiry">
+   		update INQUIRYS
+   		set INQ_TITLE=#{inqTitle}, INQ_CONTENT=#{inqContent},
+   		INQ_WRITER=#{inqWriter}, INQ_EMAIL=#{inqEmail}, INQ_PHONE=#{inqPhone}
+   		where INQ_NUM=#{inqNum}
+   </update>
+
+   <select id="getMyCommentsCount" resultType="int" parameterType="comment">
+      select count(*)
+      from reviews
+      where user_num=#{userNum}
+   </select>
+   
+   <select id="getMyComments" resultMap="commentMap1" parameterType="comment">
+      select *
+      from reviews
+      where user_num=#{userNum}
+      order by rev_num
+   </select>
+   
+   
+   <select id="getMyBookingsCount" resultType="int" parameterType="booking">
+      select count(*)
+      from bookings
+      where user_num=#{userNum}
+   </select>
+   
+   <select id="getMyBookings" resultMap="bookingMap" parameterType="booking">
+      select *
+      from bookings b left outer join rooms r
+        on b.ROOM_NUM = r.ROOM_NUM
+      where user_num=#{userNum}
+      order by booking_num
+   </select>
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.user.dao.mapper.UserMapper">	
+	<resultMap type="point" id="pointMap">
+		<id property="pointNum" column="point_num"/>
+		<result property="pointDate" column="point_date"/>
+		<result property="pointChange" column="point_change"/>
+		<result property="pointContent" column="point_content"/>
+		<result property="userNum" column="user_num" />
+	</resultMap>
+	<resultMap type="user" id="userMap">
+		<id property="userNum" column="user_num"/>
+		<result property="userEmail" column="user_email"/>
+		<result property="userPassword" column="user_pwd"/>
+		<result property="userName" column="user_korname"/>
+		<result property="userEngFirstName" column="user_firstname"/>
+		<result property="userEngLastName" column="user_lastname"/>
+		<result property="userBirth" column="user_birth"/>
+		<result property="userPhone" column="user_phone"/>
+		<result property="userTel" column="tel"/>
+		<result property="userZip" column="zip"/>
+		<result property="userAdd" column="address"/>
+		<result property="userAddDetail" column="add_detail"/>
+		<result property="userRegDate" column="user_reg_date"/>
+		<result property="userGrade" column="grade"/>
+		<collection property="myPoints" resultMap="pointMap" />
+	</resultMap>
+
+
+	<resultMap type="noneUser" id="noneUsersMap">
+		<id property="nuserNum" column="NUSER_NUM" />
+		<result property="nuserEmail" column="NUSER_EMAIL" />
+		<result property="nuserKname" column="NUSER_KORNAME" />
+		<result property="nuserLastName" column="NUSER_LASTNAME" />
+		<result property="nuserFirstName" column="NUSER_FIRSTNAME" />
+		<result property="nuserBirth" column="NUSER_BIRTH" />
+		<result property="nuserPhone" column="NUSER_PHONE" />
+		<result property="bookingNum" column="BOOKING_NUM" />
+	</resultMap>
+
+	<select id="noneUserValidate" parameterType="noneuser" resultType="int">
+		select count(*)
+		from none_users
+		where
+			BOOKING_NUM=#{bookingNum}
+			and NUSER_FIRSTNAME=#{nuserFirstName}
+			and NUSER_LASTNAME=#{nuserLastName}
+	</select>
+	
+	<select id="loginUser" parameterType="user" resultMap="userMap">
+		select *
+		from users
+		<where>
+			<if test="userEmail != null">
+				user_email=#{userEmail}
+			</if>
+			<if test="userPassword != null">
+				and user_pwd=#{userPassword}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findId" parameterType="user" resultMap="userMap">
+		select user_email
+		from users
+		where
+			user_korname = #{userName}
+			and user_firstname = #{userEngFirstName}
+			and user_lastname = #{userEngLastName}
+			and user_birth = #{userBirth}
+	</select>
+	
+	<select id="findPw" parameterType="user" resultMap="userMap">
+		select *
+		from users
+		where
+			user_korname = #{userName}
+			and user_firstname = #{userEngFirstName}
+			and user_lastname = #{userEngLastName}
+			and user_birth = #{userBirth}
+			and user_email = #{userEmail}
+			and user_phone = #{userPhone}
+	</select>
+	
+	<select id="getUsers" parameterType="page" resultMap="userMap">
+		SELECT * 
+		FROM (SELECT  m.*, FLOOR((ROWNUM - 1)/#{limit} + 1) page 
+		      FROM (SELECT * 
+		            FROM users              
+		            ORDER BY users.USER_NUM DESC) m                                 
+		          )                                            
+		WHERE page = #{nowPage}
+	</select>
+	
+	<select id="searchUser" resultMap="userMap">
+		select *
+		from users
+		where 1 = 1
+		<if test="userName != ''">
+			and user_korname = #{userName}
+		</if>
+		<if test="userEmail != ''">
+			and user_email = #{userEmail}
+		</if>
+		<if test="userNum > 0">
+			and user_num = #{userNum}
+		</if>
+	</select>
+	
+	<select id="countUser" resultType="int">
+		select count(*)
+		from users
+	</select>
+	
+	<select id="getEmail" parameterType="user" resultMap="userMap">
+		select *
+		from users
+		where user_email = #{userEmail}
+	</select>
+	
+	<select id="getUser" parameterType="user" resultMap="userMap">
+		select *
+		from users u LEFT OUTER JOIN points p
+		   ON  u.user_num = p.user_num  
+		where 1=1
+			and u.user_num = #{userNum} 
+	</select>
+	
+	<insert id="addUser" parameterType="user">
+		INSERT INTO users
+			(user_num, user_email, user_pwd, user_korname,
+			 user_firstname, user_lastname, user_birth, user_phone, 
+			 tel, zip, address,  add_detail, user_reg_date, grade) 
+		VALUES
+			(User_Seq.NEXTVAL,  #{userEmail}, #{userPassword}, #{userName},
+			#{userEngFirstName}, #{userEngLastName}, #{userBirth}, #{userPhone}, 
+			#{userTel}, #{userZip}, #{userAdd}, #{userAddDetail}, SYSDATE, 1)
+	</insert>
+	
+	<update id="updateUser" parameterType="user">
+		update users 
+		set grade=#{userGrade}, user_pwd=#{userPassword}, user_korname=#{userName}, 
+			user_firstname=#{userEngFirstName}, user_lastname=#{userEngLastName}, 
+			user_birth=#{userBirth}, user_phone=#{userPhone}, tel=#{userTel,jdbcType=VARCHAR}, zip=#{userZip,jdbcType=VARCHAR}, 
+			address=#{userAdd,jdbcType=VARCHAR}, add_detail=#{userAddDetail,jdbcType=VARCHAR}
+		where user_num=#{userNum}
+	</update>
+	
+	<delete id="delUser" parameterType="user">
+		delete from users 
+		where user_Num=#{userNum}
+	</delete> 
+	
+	<select id="countUserToday" resultType="int">
+		select count(*)
+		from users
+   		where user_reg_date like to_char(sysdate, 'YY/MM/DD')
+	</select>
+</mapper>

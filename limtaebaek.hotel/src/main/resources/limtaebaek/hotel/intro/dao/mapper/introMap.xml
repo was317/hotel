@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.intro.dao.mapper.IntroMapper">	
+	<resultMap type="intro" id="introMap">
+		<id property="introNum" column="intro_num"/>
+		<result property="introImg" column="intro_img"/>
+	</resultMap>
+	
+	<select id="getIntroImg" resultMap="introMap">
+		SELECT * 
+		FROM (SELECT * 
+				FROM intros
+				order by intro_num desc)
+    	where rownum = 1
+	</select>
+	
+	<insert id="addIntroImg" parameterType="intro">
+		insert into intros
+		values(intro_Seq.NEXTVAL, #{introImg})
+	</insert>
+</mapper>

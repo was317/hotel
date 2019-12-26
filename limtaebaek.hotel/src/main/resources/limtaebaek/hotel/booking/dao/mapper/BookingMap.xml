@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.booking.dao.mapper.BookingMapper">
+   <resultMap type="booking" id="bookingMap">
+      <id property="bookingNum" column="BOOKING_NUM" />
+      <result property="userNum" column="USER_NUM" />
+      <result property="roomNum" column="ROOM_NUM" />
+      <result property="checkIn" column="CHECK_IN_" />
+      <result property="checkOut" column="CHECK_OUT" />
+      <result property="paytype" column="PAYTYPE" />
+      <result property="payment" column="PAYMENT" />
+      <result property="adult" column="ADULT" />
+      <result property="kid" column="KID" />
+      <result property="userName" column="USER_KORNAME" />
+      <result property="roomType" column="ROOM_TYPE" />
+      <result property="nuserKname" column="NUSER_KORNAME" />
+      <result property="bookingPoint" column="POINT" />
+   </resultMap>
+   
+   <resultMap type="card" id="cardMap">
+      <id property="bookingNum" column="BOOKING_NUM" />
+      <result property="cardCom" column="CARD_COM" />
+      <result property="cardNo" column="CARD_NO" />
+      <result property="cardExp" column="CARD_EXP" />
+      <result property="installment" column="INSTALLMENT" />
+   </resultMap>
+   
+   <resultMap type="account" id="accountMap">
+      <id property="bookingNum" column="BOOKING_NUM" />
+      <result property="bank" column="BANK" />
+      <result property="account" column="ACCOUNT" />
+   </resultMap>
+   
+   <resultMap type="noneUser" id="noneUsersMap">
+      <id property="nuserNum" column="NUSER_NUM" />
+      <result property="nuserEmail" column="NUSER_EMAIL" />
+      <result property="nuserKname" column="NUSER_KORNAME" />
+      <result property="nuserLastName" column="NUSER_LASTNAME" />
+      <result property="nuserFirstName" column="NUSER_FIRSTNAME" />
+      <result property="nuserBirth" column="NUSER_BIRTH" />
+      <result property="nuserPhone" column="NUSER_PHONE" />
+      <result property="bookingNum" column="BOOKING_NUM" />
+   </resultMap>
+   
+   <select id="getBookings" resultMap="bookingMap">
+		select b.BOOKING_NUM, b.USER_NUM, b.ROOM_NUM, CHECK_IN_,
+				CHECK_OUT, PAYTYPE, PAYMENT, ADULT, KID, USER_KORNAME, ROOM_TYPE, NUSER_KORNAME
+		from ((BOOKINGS b left JOIN USERS u ON u.USER_NUM=b.USER_NUM) 
+				left JOIN rooms r on b.ROOM_NUM=r.ROOM_NUM) 
+					left JOIN NONE_USERS n on b.BOOKING_NUM=n.BOOKING_NUM
+   </select>
+   
+   <select id="getBooking" resultMap="bookingMap" parameterType="int">
+      select *
+      from BOOKINGS
+      where BOOKING_NUM=#{bookingNum}
+   </select>
+   
+   <select id="getMyBookings" resultMap="bookingMap" parameterType="int">
+   	  select BOOKING_NUM, BOOKINGS.USER_NUM, BOOKINGS.ROOM_NUM, CHECK_IN_, POINT,
+   	  			   CHECK_OUT, PAYTYPE, PAYMENT, ADULT, KID, USER_KORNAME, ROOM_TYPE
+      from USERS, ROOMS, (select * from BOOKINGS where BOOKING_NUM=#{bookingNum}) BOOKINGS
+      where USERS.USER_NUM=BOOKINGS.USER_NUM and BOOKINGS.ROOM_NUM=ROOMS.ROOM_NUM
+   </select>
+   
+   <select id="getNoneUserBookings" resultMap="bookingMap" parameterType="int">
+   	  select NONE_USERS.BOOKING_NUM, NUSER_NUM, BOOKINGS.ROOM_NUM, CHECK_IN_, 
+   	  			   CHECK_OUT, PAYTYPE, PAYMENT, ADULT, KID, NUSER_KORNAME, ROOM_TYPE
+      from NONE_USERS, BOOKINGS, ROOMS
+      where NONE_USERS.BOOKING_NUM=#{bookingNum}
+      		and NONE_USERS.BOOKING_NUM=BOOKINGS.BOOKING_NUM
+      		and BOOKINGS.ROOM_NUM=ROOMS.ROOM_NUM order by BOOKING_NUM DESC
+   </select>
+
+   <insert id="addBooking" parameterType="booking">
+	  insert into BOOKINGS(BOOKING_NUM, USER_NUM, ROOM_NUM, CHECK_IN_,
+	  						CHECK_OUT, PAYTYPE, PAYMENT, ADULT, KID, POINT)
+      values(#{bookingNum}, #{userNum}, #{roomNum}, #{checkIn},
+      			#{checkOut}, #{paytype}, #{payment}, #{adult}, #{kid}, #{bookingPoint})
+   </insert>
+   
+   <insert id="addAccount" parameterType="account">
+	  insert into ACCOUNTS(BOOKING_NUM, BANK, ACCOUNT)
+	  values(#{bookingNum}, #{bank}, #{account})
+   </insert>
+   
+   <insert id="addCard" parameterType="card">
+	  insert into CARDS(BOOKING_NUM, CARD_COM, CARD_NO, CARD_EXP, INSTALLMENT)
+	  values(#{bookingNum}, #{cardCom}, #{cardNo}, TO_DATE(#{cardExp}, 'MM/YYYY'), #{installment})
+   </insert>
+   
+   <insert id="addNoneUser" parameterType="noneUser">
+	  insert into NONE_USERS(NUSER_NUM, NUSER_EMAIL, NUSER_KORNAME, NUSER_LASTNAME,
+	  							 NUSER_FIRSTNAME, NUSER_BIRTH, NUSER_PHONE, BOOKING_NUM)
+   	  values(NUSERS_SEQ.NEXTVAL, #{nuserEmail}, #{nuserKname}, #{nuserLastName}, #{nuserFirstName},
+   	  			 TO_DATE(#{nuserBirth}, 'YYMMDD'), #{nuserPhone}, #{bookingNum})
+   </insert>
+   
+   <delete id="delBooking" parameterType="int">
+      delete from BOOKINGS
+      where BOOKING_NUM=#{bookingNum}
+   </delete>
+
+	<update id="changeBooking" parameterType="booking">
+		update BOOKINGS
+		set CHECK_IN_=#{checkIn}, CHECK_OUT=#{checkOut}, ADULT=#{adult}, KID=#{kid}, PAYMENT=#{payment}
+		where BOOKING_NUM=#{bookingNum}
+	</update>
+	
+	<select id="countBookingToday" resultType="int">
+		select count(*)
+		from bookings
+   		where  SUBSTR(to_char(BOOKING_NUM), 0, 6) like to_char(sysdate, 'YYMMDD')
+	</select>
+</mapper>

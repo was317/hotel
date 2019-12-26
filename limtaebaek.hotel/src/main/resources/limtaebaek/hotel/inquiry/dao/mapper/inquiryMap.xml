@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.inquiry.dao.mapper.InquiryMapper">
+   <resultMap type="inquiry" id="inquiryMap">
+      <id property="inqNum" column="INQ_NUM" />
+      <result property="inqTitle" column="INQ_TITLE" />
+      <result property="inqContent" column="INQ_CONTENT" />
+      <result property="inqDate" column="INQ_DATE" />
+      <result property="inqWriter" column="INQ_WRITER" />
+      <result property="inqEmail" column="INQ_EMAIL" />
+      <result property="inqPhone" column="INQ_PHONE" />
+      <result property="status" column="STATUS" />
+      <result property="userNum" column="USER_NUM" />
+      <result property="count" column="COUNT" />
+   </resultMap>
+   
+   <resultMap id="commentMap" type="inquiryComment">
+      <id column="INQ_NUM" property="inqNum"/>
+      <result column="INQ_CMT_CONTENT" property="inqCmtContent"/>
+      <result column="INQ_CMT_DATE" property="inqCmtDate"/>
+   </resultMap>
+
+   <select id="getInquirys" resultMap="inquiryMap">
+      select INQ_NUM,INQ_TITLE,INQ_CONTENT,INQ_DATE,INQ_WRITER,INQ_EMAIL,INQ_PHONE,
+      decode(STATUS, 0, '답변 대기', 1,'처리완료') as STATUS, USER_NUM
+      from INQUIRYS order by INQ_NUM DESC
+   </select>
+
+   <select id="getCount" resultMap="inquiryMap">
+      select count (*) as count
+      from INQUIRYS
+      where status=0
+   </select>
+
+   <select id="getInquiry" resultMap="inquiryMap" parameterType="int">
+      select *
+      from INQUIRYS
+      where INQ_NUM=#{inqNum}
+   </select>
+   
+   <select id="getInquiryAnswer" resultMap="commentMap" parameterType="int">
+      select *
+      from INQUIRYS_CMT
+      where INQ_NUM=#{inqNum}
+   </select>
+
+   <insert id="addInquiry" parameterType="inquiry">insert into
+      INQUIRYS(INQ_NUM, INQ_TITLE, INQ_CONTENT, INQ_DATE,INQ_WRITER,
+      INQ_EMAIL, INQ_PHONE, STATUS,USER_NUM)
+      values(INQUIRY_NUM.NEXTVAL,
+      #{inqTitle}, #{inqContent}, SYSDATE,#{inqWriter}, #{inqEmail},
+      #{inqPhone}, #{status},#{userNum})
+   </insert>
+
+   <delete id="delInquiry" parameterType="int">
+      delete from INQUIRYS
+      where INQ_NUM=#{inqNum}
+   </delete>
+
+   <insert id="addComment" parameterType="inquiryComment">
+      insert into INQUIRYS_CMT(INQ_NUM, INQ_CMT_CONTENT, INQ_CMT_DATE)
+      values(#{inqNum},#{inqCmtContent}, SYSDATE)
+   </insert>
+   
+	<update id="updateStatus" parameterType="int">
+		update INQUIRYS
+		set STATUS=1
+		where INQ_NUM=#{inqNum}
+	</update>
+	
+	<select id="countInquiryToday" resultType="int">
+		select count(*)
+		from inquirys
+   		where INQ_DATE like to_char(sysdate, 'YY/MM/DD')
+	</select>
+	
+	<select id="countInquiryTodayNoComent" resultType="int">
+		select count(*)
+		from inquirys
+   		where INQ_DATE like to_char(sysdate, 'YY/MM/DD')
+   			AND status = 0
+	</select>
+	
+</mapper>

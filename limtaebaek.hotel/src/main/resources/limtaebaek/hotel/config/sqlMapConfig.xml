@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+		 <package name="limtaebaek.hotel.common.domain" />
+		 <package name="limtaebaek.hotel.point.domain" />
+		 <package name="limtaebaek.hotel.user.domain" />
+		 <package name="limtaebaek.hotel.room.domain" />
+		 <package name="limtaebaek.hotel.inquiry.domain" />
+		 <package name="limtaebaek.hotel.promotion.domain" />
+		 <package name="limtaebaek.hotel.comment.domain" />
+		 <package name="limtaebaek.hotel.booking.domain" />
+		 <package name="limtaebaek.hotel.account.domain" />
+		 <package name="limtaebaek.hotel.card.domain" />
+		 <package name="limtaebaek.hotel.noneUser.domain" />
+		 <package name="limtaebaek.hotel.intro.domain" />
+	</typeAliases>
+</configuration>

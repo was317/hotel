@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.promotion.dao.mapper.PromotionMapper">
+	<resultMap type="promotion" id="promotionMap">
+		<id property="proNum" column="pro_num"/>
+		<result property="proTitle" column="pro_title"/>
+		<result property="proContent" column="pro_content"/>
+		<result property="proStartDate" column="pro_start_date"/>
+		<result property="proEndDate" column="pro_end_date"/>
+		<result property="proDetail" column="pro_detail"/>
+		<result property="proRegDate" column="pro_reg_date"/>
+
+		<collection property="promotionDetails" resultMap="prodMap"/>
+	</resultMap>
+	
+	<resultMap type="promotiondetail" id="prodMap">
+		<id property="prodNum" column="prod_num"/>
+		<result property="proNum" column="pro_num" />
+		<result property="prodTitle" column="prod_title"/>
+		<result property="location" column="location"/>
+		<result property="prodPic" column="prod_pic"/>
+		<result property="serviceHour" column="service_hour"/>
+		<result property="notice" column="notice"/>
+		<result property="prodContent" column="prod_content"/>
+	</resultMap>
+	
+	<select id="getPros" resultMap="promotionMap">
+		select a.pro_num, min(b.prod_num), b.prod_pic, a.pro_title, a.pro_content, 
+			a.pro_start_date, a.pro_end_date
+		from promotions a, pro_details b
+		where 1 = 1
+				AND a.pro_num = b.pro_num
+			<if test="schStartDate != null and schEndDate != null
+				and schStartDate != '' and schEndDate != '' ">
+				AND NOT((#{schStartDate} <![CDATA[ < ]]> a.pro_start_date and #{schEndDate} <![CDATA[ < ]]> a.pro_start_date)
+					OR(a.pro_end_date <![CDATA[ < ]]> #{schStartDate} and a.pro_end_date <![CDATA[ < ]]> #{schEndDate}))
+			</if>
+			<if test="keyword != null and keyword != '' ">
+				AND a.pro_title like ('%'||#{keyword}||'%')
+			</if>
+			<if test="schStartDate != null and schEndDate != null
+				and schStartDate != '' and schEndDate != '' 
+				and keyword != null and keyword != '' ">
+				AND (a.pro_title like ('%'||#{keyword}||'%')
+					AND NOT((#{schStartDate} <![CDATA[ < ]]> a.pro_start_date and #{schEndDate} <![CDATA[ < ]]> a.pro_start_date) 
+						OR (a.pro_end_date <![CDATA[ < ]]> #{schStartDate} and a.pro_end_date <![CDATA[ < ]]> #{schEndDate})))
+			</if>
+		group by a.pro_num, b.prod_pic, a.pro_title, a.pro_content, 
+			a.pro_start_date, a.pro_end_date
+		order by a.pro_num desc
+	</select>
+	
+	<select id="getPro" parameterType="int" resultMap="promotionMap">
+		select *
+		from promotions, pro_details
+		where promotions.pro_num = pro_details.pro_num
+			and promotions.pro_num = #{proNum}
+	</select>
+	
+	<select id="getBoardPros" resultMap="promotionMap">
+		select *
+		from promotions
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="schStartDate != null and schEndDate != null
+				and schStartDate != '' and schEndDate != '' ">
+				AND NOT((#{schStartDate} <![CDATA[ < ]]> pro_start_date and #{schEndDate} <![CDATA[ < ]]> pro_start_date)
+					OR(pro_end_date <![CDATA[ < ]]> #{schStartDate} and pro_end_date <![CDATA[ < ]]> #{schEndDate}))
+			</if>
+			<if test="keyword != null and keyword != '' ">
+				AND pro_title like ('%'||#{keyword}||'%')
+			</if>
+			<if test="schStartDate != null and schEndDate != null
+				and schStartDate != '' and schEndDate != '' 
+				and keyword != null and keyword != '' ">
+				AND (pro_title like ('%'||#{keyword}||'%')
+					AND NOT((#{schStartDate} <![CDATA[ < ]]> pro_start_date and #{schEndDate} <![CDATA[ < ]]> pro_start_date) 
+						OR (pro_end_date <![CDATA[ < ]]> #{schStartDate} and pro_end_date <![CDATA[ < ]]> #{schEndDate})))
+			</if>
+		</trim>
+		order by pro_num desc
+	</select>
+	
+	<!-- <select id="boardProsCnt" resultType="int">
+		select count(*) as listCnt
+		from promotions
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="keyword != null and keyword != '' ">
+				AND pro_title like CONCAT('%', #{keyword}, '%')
+			</if>
+		</trim>
+	</select> -->
+	
+	<insert id="addPro" parameterType="promotion">
+		insert into promotions
+			(pro_num, pro_title, pro_content, pro_start_date, pro_end_date, pro_detail, pro_reg_date)
+		values
+			(promotion_seq.nextval, #{proTitle, jdbcType=VARCHAR}, #{proContent, jdbcType=VARCHAR}, #{proStartDate, jdbcType=DATE}, 
+				#{proEndDate, jdbcType=DATE}, #{proDetail, jdbcType=VARCHAR}, sysdate)
+	</insert>
+	<insert id="addProd" parameterType="promotiondetail">
+		insert into pro_details
+			(prod_num, pro_num, prod_title, location, service_hour, notice, prod_content, prod_pic)
+		values(pro_detail_seq.nextval, promotion_seq.currval, #{prodTitle, jdbcType=VARCHAR}, #{location, jdbcType=VARCHAR}, 
+			#{serviceHour, jdbcType=VARCHAR}, #{notice, jdbcType=VARCHAR}, #{prodContent, jdbcType=VARCHAR}, #{prodPic, jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updatePro" parameterType="promotion">
+		update promotions
+		set pro_title = #{proTitle}
+			pro_start_date = #{proStartDate}
+			pro_end_date = #{proEndDate}
+			pro_content = #{proContent}
+			pro_detail = #{proDetail}
+		where pro_num = #{proNum}
+	</update>
+	<update id="updateProd" parameterType="promotiondetail">
+		update pro_details
+		set prod_pic = #{prodPic}
+			prod_title = #{prodTitle}
+			location = #{location}
+			service_hour = #{serviceHour}
+			notice = #{notice}
+			prod_content = #{prodContent}
+		where pro_num = #{proNum}
+	</update>
+		
+	<delete id="delPro" parameterType="int">
+		delete from promotions where pro_num = #{proNum}
+	</delete>
+</mapper>

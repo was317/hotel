@@ -1,0 +1,58 @@
+@CHARSET "UTF-8";
+
+div.joinStep{
+	height: 51px;
+    width: 866px;
+    background: #FFF;
+    margin: 30px auto;
+    margin-bottom: 100px;
+}
+
+.joinStep .step {
+    float: left;
+    height: 39px;
+}
+
+.joinStep ul, .joinStep li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+   	float: left;
+}
+.joinStep{ 
+   	height: 51px;
+    width: 866px;
+    background: #FFF;
+    margin: auto;
+}
+.joinStep .step li { 
+   	float: left;
+}
+.joinStep .step li span {    
+	display: block;
+    zoom: 1;
+    height: 51px;
+    overflow: hidden;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 1000;
+    margin: 10px 0 10px 0;
+    padding: 10px 0 10px 0;
+    background-color: #f8f8f8;
+    border: #432c10 solid 1px;
+}
+.joinStep .step li.t1{
+    background-position: 0px 0px;
+   	width: 288px;
+}
+.joinStep .step li.t2{
+    background-position: -289px 0px;
+    width: 289px;
+}
+.joinStep .step li.t3{
+    background-position: -577px 0px;
+   	width: 289px;
+}
+.joinStep .step li.on span{
+	background-color: lightgray;
+}

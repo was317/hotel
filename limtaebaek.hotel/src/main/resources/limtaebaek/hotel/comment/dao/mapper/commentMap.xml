@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="limtaebaek.hotel.comment.dao.mapper.CommentMapper">
+	<resultMap type="user" id="userMap">
+		<id property="userNum" column="user_num"/>
+		<result property="userEmail" column="user_email"/>
+		<result property="userPassword" column="user_pwd"/>
+		<result property="userName" column="user_korname"/>
+		<result property="userEngFirstName" column="user_firstname"/>
+		<result property="userEngLastName" column="user_lastname"/>
+		<result property="userBirth" column="user_birth"/>
+		<result property="userPhone" column="user_phone"/>
+		<result property="userTel" column="tel"/>
+		<result property="userZip" column="zip"/>
+		<result property="userAdd" column="address"/>
+		<result property="userAddDetail" column="add_detail"/>
+		<result property="userRegDate" column="user_reg_date"/>
+		<result property="userGrade" column="grade"/>
+	</resultMap>
+	
+	<resultMap type="comment" id="commentMap1">
+		<id property="revNum" column="rev_num"/>
+		<result property="userNum" column="user_num"/>
+		<result property="revTitle" column="rev_title"/>
+		<result property="revContent" column="rev_content"/>
+		<result property="roomType" column="room_type"/>
+		<result property="rate" column="rate"/>
+		<result property="revDate" column="rev_date"/>
+		<result property="revImage1" column="rev_pic"/>
+		<result property="revImage2" column="rev_pic2"/>
+		<result property="revImage3" column="rev_pic3"/>
+		<association property="user" resultMap="userMap"></association>
+
+	</resultMap>
+		<select id="getComments" resultMap="commentMap1">
+		select *
+		from reviews r LEFT OUTER JOIN users u
+			   ON  r.user_num = u.user_num  
+	<!-- 	<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="searchType=='title' and keyword != null and keyword != '' ">
+				AND TITLE like CONCAT('%', #{keyword)
+			</if>
+					<if test="searchType=='content' and keyword != null and keyword != '' ">
+
+		</trim> -->
+		order by rev_num desc
+	</select>
+	
+	
+	
+	
+		<select id="getReview" parameterType="int"  resultMap="commentMap1"  >
+			select * 
+		from reviews r LEFT OUTER JOIN users u
+			   ON  r.user_num = u.user_num 
+		where rev_num = #{revNum}
+		
+	</select>
+	
+	<insert id="addComment" parameterType="comment">
+		INSERT INTO reviews
+			(rev_num,  rev_title, rev_content, 
+			room_type,  rev_date, user_num, rate, 
+			rev_pic, rev_pic2, rev_pic3) 
+		VALUES
+			(REV_CMT_SEQ.NEXTVAL, #{revTitle,jdbcType=VARCHAR},#{revContent,jdbcType=VARCHAR}, 
+			#{roomType, jdbcType=VARCHAR}, SYSDATE, #{userNum}, #{rate},
+			#{revImage1, jdbcType=VARCHAR}, #{revImage2, jdbcType=VARCHAR}, #{revImage3, jdbcType=VARCHAR}
+			 )
+	</insert>
+	
+		<delete id="delReview" parameterType="int">
+		delete from reviews
+		where  rev_num = #{revNum}
+	</delete>
+	
+		<update id="updateReview" parameterType="comment">
+		update reviews 
+		set rev_title=#{revTitle,jdbcType=VARCHAR }, rev_content=#{revContent,jdbcType=VARCHAR}, 
+			room_type=#{roomType,jdbcType=VARCHAR}
+			
+		where rev_num = #{revNum}
+	</update>
+	
+	<!-- 
+	<update id="updateUser" parameterType="user">
+		update users 
+		set user_name=#{userName}, reg_date=SYSDATE
+		where user_no=#{userNo}
+	</update>
+	
+	<delete id="delUser" parameterType="int">
+		delete from users 
+		where user_no=#{userNo}
+	</delete> 
+	-->
+</mapper>
