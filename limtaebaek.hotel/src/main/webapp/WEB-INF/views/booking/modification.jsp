@@ -25,7 +25,7 @@
 }
 
 .pointpanel, .paytypepanel {
-	margin-left: 70%;
+	margin-left: 65%;
 }
 
 .panel-body {
@@ -112,10 +112,14 @@ $(function() {
 	    	$("#days").text("${days}");
 	    }
 	    else {
-		   $("#days").text(parseInt(days()));
-		   document.form.submit();
+		   swal({
+				text: "수정되었습니다",
+				icon: "success",
+				button: "확인",
+			}).then((value) => {
+				document.form.submit();
+			});
 		}
-		
 	});
 	
 	//체크인
@@ -152,13 +156,27 @@ $(function() {
 	    return dif/cDay;
 	}
 	
+	//금액 변동
 	function charge(){
-		var beforeD = '<c:out value="${days}"/>';
-		var afterD = $("#days").text();
-		var a = beforeD*1 + afterD*1
-		alert(a);
+		var beforeD = "${days}" * 1;
+		var afterD = $("#days").text() * 1;
+		var point = "${booking.bookingPoint}" * 1;
+		var beforC = "${booking.payment}" * 1 + point;
 		
-	    return beforeD + afterD;
+		if(beforeD == 0){
+			beforeD++;
+			afterD++;
+		}
+		//100원 밑 절사
+		var changeCharge = Math.ceil(((beforC / beforeD) * (afterD - beforeD)) / 100) * 100;
+		//변동금액이 -50%이하일때 50%금액으로 고정 
+		if(changeCharge + beforC < beforC / 2){
+			$("#changeCharge").text(beforC / 2 * (-1));
+			$("#payment").text(beforC / 2 - point);
+			return;
+		}
+		$("#changeCharge").text(changeCharge);
+		$("#payment").text(changeCharge + beforC - point);
 	}
 });
 </script>
@@ -265,9 +283,9 @@ $(function() {
 								<span class="pointpanel">사용 포인트: <label id="point">${booking.bookingPoint}</label></span>
 							</div>
 							<div class="panel-footer">
-								<span class="pointpanel">요금 합계: <label id="payment">${booking.payment}</label>
+								<span class="pointpanel">요금 합계: <label id="payment">${booking.payment}</label>원
 								&nbsp;/&nbsp;
-						요금 변동: <label id="changeCharge">0</label></span>
+						요금 변동: <label id="changeCharge">0</label>원</span>
 							</div>
 						</div>
 						<!-- 포인트,요금 끝-->

@@ -386,6 +386,7 @@ $(function() {
 									<option>1</option>
 									<option>2</option>
 									<option>3</option>
+									<option>4</option>
 								</select>
 								<p class="form-control-static">&nbsp; | &nbsp; 유아</p>
 								<select class="form-control" id="kid">

@@ -83,10 +83,17 @@ public class BookingController {
 			Point point = new Point();
 			point.setPointChange(booking.getBookingPoint() * (-1));
 			model.addAttribute("point", booking.getBookingPoint());
-			point.setPointContent("객실예약");
+			point.setPointContent("포인트 사용 (객실예약)");
 			point.setUserNum(booking.getUserNum());
-			model.addAttribute("point", pointService.addPoint(point));
+			pointService.addPoint(point);
 		}
+		
+		Point point = new Point();
+		point.setPointChange(booking.getPayment() / 20);
+		point.setPointContent("포인트 적립 (결제금액 5%)");
+		point.setUserNum(booking.getUserNum());
+		pointService.addPoint(point);
+		
 		return booking;
 	}
 	
@@ -166,6 +173,12 @@ public class BookingController {
 	@ResponseBody
 	@RequestMapping("/delBooking")
 	public String delBooking(Model model, int bookingNum) {
+		Booking booking = bookingService.getBooking(bookingNum);
+		Point point = new Point();
+		point.setPointChange(booking.getBookingPoint());
+		point.setPointContent("포인트 환불 (예약취소)");
+		point.setUserNum(booking.getUserNum());
+		pointService.addPoint(point);
 		bookingService.delBooking(bookingNum);
 		return "del";
 	}
