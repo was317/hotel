@@ -10,6 +10,7 @@ import limtaebaek.hotel.booking.domain.Account;
 import limtaebaek.hotel.booking.domain.Booking;
 import limtaebaek.hotel.booking.domain.Card;
 import limtaebaek.hotel.booking.domain.NoneUser;
+import limtaebaek.hotel.common.domain.Page;
 import limtaebaek.hotel.room.domain.Room;
 import limtaebaek.hotel.user.domain.User;
 
@@ -38,8 +39,8 @@ public class BookingDaoImpl implements BookingDao{
 	}
 	
 	@Override
-	public List<Booking> getBookings() {
-		return mapper.getBookings();
+	public List<Booking> getBookings(Page page) {
+		return mapper.getBookings(page);
 	}
 
 	@Override
@@ -80,5 +81,10 @@ public class BookingDaoImpl implements BookingDao{
 	@Override
 	public int countBookingToday() {
 		return mapper.countBookingToday();
+	}
+
+	@Override
+	public int countBooking() {
+		return mapper.countBooking();
 	}
 }

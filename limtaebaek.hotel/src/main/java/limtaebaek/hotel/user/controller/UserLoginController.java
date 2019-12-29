@@ -1,4 +1,4 @@
-package limtaebaek.hotel.user.comtroller;
+package limtaebaek.hotel.user.controller;
 
 import java.util.List;
 import java.util.UUID;

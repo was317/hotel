@@ -118,7 +118,7 @@ var confirm = function(msg, type) {
 		
 		//목록버튼 클릭시 호출
 		$("#back").click(function(){
-			location.href = "bookingManage";
+			history.back();
 		})
 	});
 </script>

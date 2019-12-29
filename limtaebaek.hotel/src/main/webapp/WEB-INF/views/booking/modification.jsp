@@ -98,12 +98,6 @@ $(function() {
 		var kid = $("#kid").val();
 		var payment = $("#payment").text();
 		var bookingNum = $("#bookingNum").text();
-		$("#bookingcheckIn").val(checkIn);
-		$("#bookingcheckOut").val(checkOut);
-		$("#bookingAdult").val(adult);
-		$("#bookingKid").val(kid);
-		$("#bookingPayment").val(payment);
-		$("#bookingNumber").val(bookingNum);
 		
 		if($("#days").text() == ""){
 	    	alert("날짜를 다시 설정해 주세요.", "warning");
@@ -112,12 +106,27 @@ $(function() {
 	    	$("#days").text("${days}");
 	    }
 	    else {
-		   swal({
-				text: "수정되었습니다",
-				icon: "success",
-				button: "확인",
-			}).then((value) => {
-				document.form.submit();
+	    	$.ajax({
+				url:"changeBooking",
+				data: {		
+					checkIn: checkIn,
+					checkOut: checkOut,
+					adult: adult,
+					kid: kid,
+					payment: payment,
+					bookingNum: bookingNum
+				},
+				success : function(data) {
+					swal({
+						text: "수정되었습니다",
+						icon: "success",
+						button: "확인",
+					}).then((value) => {
+						location.href="bookingManage";
+					});
+				},error:function(a, b, errMsg){
+					alert("수정오류" + errMsg);
+				} 			
 			});
 		}
 	});
@@ -304,14 +313,6 @@ $(function() {
 				</div>
 			</section>
 		</div>
-		<form name="form" method="post" action="changeBooking">
- 			<input id="bookingcheckIn" name="checkIn" type="hidden" value="">
-			<input id="bookingcheckOut" name="checkOut" type="hidden" value="">
-			<input id="bookingAdult" name="adult" type="hidden" value="">
-			<input id="bookingKid" name="kid" type="hidden" value="">
-			<input id="bookingPayment" name="payment" type="hidden" value="">
-			<input id="bookingNumber" name="bookingNum" type="hidden" value="">
-		</form>
 		<jsp:include page="../common/footer.jsp" />
 	</div>
 </body>

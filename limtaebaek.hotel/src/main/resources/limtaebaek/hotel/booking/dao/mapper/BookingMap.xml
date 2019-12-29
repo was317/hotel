@@ -44,13 +44,22 @@
       <result property="bookingNum" column="BOOKING_NUM" />
    </resultMap>
    
-   <select id="getBookings" resultMap="bookingMap">
-		select b.BOOKING_NUM, b.USER_NUM, b.ROOM_NUM, CHECK_IN_,
-				CHECK_OUT, PAYTYPE, PAYMENT, ADULT, KID, USER_KORNAME, ROOM_TYPE, NUSER_KORNAME
-		from ((BOOKINGS b left JOIN USERS u ON u.USER_NUM=b.USER_NUM) 
-				left JOIN rooms r on b.ROOM_NUM=r.ROOM_NUM) 
-					left JOIN NONE_USERS n on b.BOOKING_NUM=n.BOOKING_NUM
+   <select id="getBookings" resultMap="bookingMap" parameterType="page">
+		select * 
+		from (select  m.*, FLOOR((ROWNUM - 1)/#{limit} + 1) page 
+		      from (select b.BOOKING_NUM, b.USER_NUM, b.ROOM_NUM, CHECK_IN_,
+						CHECK_OUT, PAYTYPE, PAYMENT, ADULT, KID, USER_KORNAME, ROOM_TYPE, NUSER_KORNAME
+					from ((BOOKINGS b left JOIN USERS u ON u.USER_NUM=b.USER_NUM) 
+							left JOIN rooms r on b.ROOM_NUM=r.ROOM_NUM) 
+								left JOIN NONE_USERS n on b.BOOKING_NUM=n.BOOKING_NUM ORDER BY b.BOOKING_NUM DESC) m                                 
+		     )                                            
+		WHERE page = #{nowPage}
    </select>
+   
+   <select id="countBooking" resultType="int">
+		select count(*)
+		from BOOKINGS
+	</select>
    
    <select id="getBooking" resultMap="bookingMap" parameterType="int">
       select *

@@ -10,7 +10,7 @@ public class PageServiceImpl implements PageService{
 	
 	public PageServiceImpl() {
 		this.pageInfo = new Page();
-		this.pageInfo.setLimit(20);	//페이지에 나타날 row 수 설정
+		this.pageInfo.setLimit(10);	//페이지에 나타날 row 수 설정
 	}
 	
 	@Override
@@ -18,8 +18,8 @@ public class PageServiceImpl implements PageService{
 		if(nowPage < 1) nowPage=1;     
 		int maxPage = (int)(
 				(double) dataSize/this.pageInfo.getLimit() + 0.95);       
-		int startPage = (((int)((double) nowPage/10 + 0.9 )) -1)*10 + 1;                        
-		int endPage = startPage + 9;                                         
+		int startPage = (((int)((double) nowPage/5 + 0.9 )) -1)*5 + 1;                        
+		int endPage = startPage + 4;                                         
 		if(endPage > maxPage) endPage=maxPage;                                                   
 		if(nowPage >= endPage) nowPage=endPage;                                                                               
 		  

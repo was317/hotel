@@ -14,6 +14,7 @@ import limtaebaek.hotel.booking.domain.Account;
 import limtaebaek.hotel.booking.domain.Booking;
 import limtaebaek.hotel.booking.domain.Card;
 import limtaebaek.hotel.booking.domain.NoneUser;
+import limtaebaek.hotel.common.domain.Page;
 import limtaebaek.hotel.room.domain.Option;
 import limtaebaek.hotel.room.service.RoomService;
 import limtaebaek.hotel.user.domain.User;
@@ -29,8 +30,8 @@ public class BookingServiceImpl implements BookingService{
 	}
 
 	@Override
-	public List<Booking> BookingList() {
-		return bookingDao.getBookings();
+	public List<Booking> BookingList(Page page) {
+		return bookingDao.getBookings(page);
 	}
 
 	@Override
@@ -74,11 +75,13 @@ public class BookingServiceImpl implements BookingService{
 	
 	//예약번호 생성 -> 예약날짜+객실번호+랜덤2자리수
 	public int bookingNum(Booking booking) {
-
-		java.util.Date now = new java.util.Date();
+		String roomNum = Integer.toString(booking.getRoomNum());
+		java.util.Date today = new java.util.Date();
 		Random rand = new Random();
-		String bookingNum = new SimpleDateFormat("yyMMdd").format(now);
-		bookingNum = bookingNum + booking.getRoomNum() + (rand.nextInt(89) + 10);
+		String bookingNum = new SimpleDateFormat("yyMMdd").format(today);
+		if(booking.getRoomNum() < 10)
+			roomNum = "0" + booking.getRoomNum();
+		bookingNum = bookingNum + roomNum + (rand.nextInt(89) + 10);
 		
 		return Integer.parseInt(bookingNum);
 	}
@@ -107,7 +110,7 @@ public class BookingServiceImpl implements BookingService{
 			if(list.get(i).getOptNo() == 0) continue;
 			else
 				roomOption = roomOption + option[list.get(i).getOptNo() - 1] + " ";
-			}
+		}
 		return roomOption;
 	}
 
@@ -125,5 +128,10 @@ public class BookingServiceImpl implements BookingService{
 	@Override
 	public int countBookingToday() {
 		return bookingDao.countBookingToday();
+	}
+
+	@Override
+	public int countBooking() {
+		return bookingDao.countBooking();
 	}
 }

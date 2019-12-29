@@ -1,4 +1,4 @@
-package limtaebaek.hotel.user.comtroller;
+package limtaebaek.hotel.user.controller;
 
 import java.util.HashMap;
 import java.util.List;

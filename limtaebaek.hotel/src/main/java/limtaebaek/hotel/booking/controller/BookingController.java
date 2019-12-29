@@ -22,6 +22,8 @@ import limtaebaek.hotel.booking.domain.Booking;
 import limtaebaek.hotel.booking.domain.Card;
 import limtaebaek.hotel.booking.domain.NoneUser;
 import limtaebaek.hotel.booking.service.BookingService;
+import limtaebaek.hotel.common.domain.Page;
+import limtaebaek.hotel.common.service.PageService;
 import limtaebaek.hotel.point.domain.Point;
 import limtaebaek.hotel.point.service.PointService;
 import limtaebaek.hotel.room.domain.Option;
@@ -36,6 +38,7 @@ public class BookingController {
 	@Autowired private BookingService bookingService;
 	@Autowired private RoomService roomService;
 	@Autowired private PointService pointService;
+	@Autowired private PageService pageService;
 	
 	//예약정보 기입 페이지
 	@Transactional
@@ -118,6 +121,7 @@ public class BookingController {
 		int userNum = user.getUserNum();
 		Booking booking = bookingService.getBooking(bookingNum);
 		model.addAttribute("optionList", roomService.getRoom(booking.getRoomNum()).getOptions());
+		model.addAttribute("days", bookingService.days(booking.getCheckIn(), booking.getCheckOut()));
 		if(userNum == 0){
 			model.addAttribute("nUserBooking", bookingService.getNoneUserBookings(booking.getBookingNum()));
 			return "booking/noneUserBooking";
@@ -131,8 +135,14 @@ public class BookingController {
 	//예약관리 페이지
 	@Transactional
 	@RequestMapping("/bookingManage")
-	public String bookingManage(Model model) {
-		model.addAttribute("bookingList", bookingService.BookingList());
+	public String bookingManage(Model model, @RequestParam(value="page",required=false) String pageNo){
+		int dataSize = bookingService.countBooking();
+		int nowPage = 1;
+
+		if(pageNo != null) nowPage = Integer.parseInt(pageNo);
+		Page page = pageService.paging(nowPage, dataSize);
+		model.addAttribute("bookingList", bookingService.BookingList(page));
+		model.addAttribute("page", page);
 		return "booking/manage";
 	}
 	
@@ -185,10 +195,11 @@ public class BookingController {
 	
 	//예약정보 수정페이지 -> 예약수정
 	@Transactional
+	@ResponseBody
 	@RequestMapping("/changeBooking")
-	public String changeBooking(Model model, Booking booking) {
+	public boolean changeBooking(Model model, Booking booking) {
 		bookingService.changeBooking(booking);
-		return "redirect:/booking/bookingManage";
+		return true;
 	}
 	
 	@RequestMapping("/todayBookingUser")

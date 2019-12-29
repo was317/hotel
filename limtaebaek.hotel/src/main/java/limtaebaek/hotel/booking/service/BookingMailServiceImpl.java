@@ -56,7 +56,7 @@ public class BookingMailServiceImpl implements BookingMailService{
 				+ "</tr>"
 				+ "<tr>"
 				+ "<td style='padding: 10px;'>숙박일수</td>"
-				+ "<td style='padding: 10px;'><label id='days'></label>" + bookingService.days(booking.getCheckIn(), booking.getCheckOut()) + "일</td>"
+				+ "<td style='padding: 10px;'><label id='days'></label>" + bookingService.days(booking.getCheckIn(), booking.getCheckOut()) + "박</td>"
 				+ "<td style='padding: 10px;'>투숙인원</td>"
 				+ "<td style='padding: 10px;'>성인: <label id='adult'>" + booking.getAdult() + "</label>"
 				+ "/ 어린이: <label id='kid'>" + booking.getKid() + "</label>"

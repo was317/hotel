@@ -54,7 +54,7 @@ var loadMyBooking = function(userNum) {
 							'<td>' + booking.roomType		+ '</td>' +
 							'<td>' + booking.checkIn		+ '</td>' +
 							'<td>' + booking.checkOut		+ '</td>' +
-							'<td>' + (new Date(booking.checkOut) - new Date(booking.checkIn))/(1000*3600*24) + "일"	+ '</td>' +
+							'<td>' + (new Date(booking.checkOut) - new Date(booking.checkIn))/(1000*3600*24) + "박"	+ '</td>' +
 							'<td>' + (Number(booking.adult) + Number(booking.kid)) + "명" + '</td>' +
 							'</tr>'				
 					);

@@ -317,7 +317,7 @@ $(function() {
 					if(roomImages[idx] != null)
 						$(this).attr("src", "<c:url value='/img/" + roomImages [idx] + "'/>");
 					})
-				$("#roomType").val(room.roomName);
+				$("#roomType").text(room.roomName);
 				$("#roomContent").val(room.roomContent);
 				$("input:checkbox[name=rom][value=" +room.roomType+ "]").prop("checked",true);
 				$("input:checkbox[name=count][value=" +room.guests+ "]").prop("checked",true);
@@ -532,7 +532,7 @@ $(function() {
 												<tbody>
 													<tr>
 														<th>객실명</th>
-														<td><input id="roomType" onfocus="this.blur();"></td>
+														<td><p id="roomType"></p></td>
 													</tr>
 													<tr>
 														<th>방타입</th>
