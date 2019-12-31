@@ -87,4 +87,9 @@ public class BookingDaoImpl implements BookingDao{
 	public int countBooking() {
 		return mapper.countBooking();
 	}
+
+	@Override
+	public List<Booking> searchBooking(int num) {
+		return mapper.searchBooking(num);
+	}
 }

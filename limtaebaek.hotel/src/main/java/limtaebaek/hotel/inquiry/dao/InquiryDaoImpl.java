@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import limtaebaek.hotel.common.domain.Page;
 import limtaebaek.hotel.inquiry.dao.mapper.InquiryMapper;
 import limtaebaek.hotel.inquiry.domain.Inquiry;
 import limtaebaek.hotel.inquiry.domain.InquiryComment;
@@ -24,8 +25,8 @@ public class InquiryDaoImpl implements InquiryDao{
 	}
 
 	@Override
-	public List<Inquiry> getInquirys() {
-		return mapper.getInquirys();
+	public List<Inquiry> getInquirys(Page page) {
+		return mapper.getInquirys(page);
 	}
 
 	@Override
@@ -61,5 +62,10 @@ public class InquiryDaoImpl implements InquiryDao{
 	@Override
 	public int countInquiryTodayNoComent() {
 		return mapper.countInquiryTodayNoComent();
+	}
+
+	@Override
+	public int countInquiry() {
+		return mapper.countInquiry();
 	}
 }

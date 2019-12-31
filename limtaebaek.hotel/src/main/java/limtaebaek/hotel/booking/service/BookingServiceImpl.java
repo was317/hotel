@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import limtaebaek.hotel.booking.dao.BookingDao;
@@ -133,5 +134,10 @@ public class BookingServiceImpl implements BookingService{
 	@Override
 	public int countBooking() {
 		return bookingDao.countBooking();
+	}
+
+	@Override
+	public List<Booking> searchBooking(int num) {
+		return bookingDao.searchBooking(num);
 	}
 }

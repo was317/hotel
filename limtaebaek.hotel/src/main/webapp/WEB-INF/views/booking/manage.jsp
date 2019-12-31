@@ -38,39 +38,46 @@ var alert = function(msg, type) {
 }
 
 $(document).ready(function() {
-	var select = "예약번호";
-	var td = ".td1";
-	
-	//셀렉트박스 클릭시 호출
-	$("#selectBox").change(function() {
-		select = $("#selectBox option:selected").val();
-		$("#search").val("");
-	});
-	
 	//검색시 호출
 	$("#search").on("keyup", function() {
-		var value = $(this).val().toLowerCase();
-		if(select == "예약번호")
-			$(this).val($(this).val().replace(/[^0-9]/gi, '')); 
-		else
-			$(this).val($(this).val().replace(/[^가-힣ㄱ-ㅎa-z]/gi, '')); 
-			
-		$("table tbody .tr1").filter(function() {
-			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-		});
+		$(this).val($(this).val().replace(/[^0-9]/gi, '')); 
+ 		if($(this).val() > 2113000000){
+			alert("예약번호를 확인해주세요", "warning");
+			return;
+		} 
+ 		$.ajax({
+			url:"searchBooking",
+			data: {		
+				num: $(this).val()
+			},
+			success : function(data) {
+				$("tr.tr1").remove(); 
+				var str;
+	            $.each(data , function(i){
+	            	str += '<tr class="tr1">';
+	                str += '<td>' + data[i].bookingNum + '</td><td>' + data[i].roomType + '</td><td>' +
+	                data[i].checkIn + "~" + data[i].checkOut + '</td><td>' + data[i].userName + '</td><td>' +
+	                '<button type="button" class="btn btn-success infoButton" id="' + data[i].bookingNum + '">예약정보</button>' + '</td>';
+	                str += '</tr>';
+	           });
+	           $("#table").append(str); 
+			},error:function(a, b, errMsg){
+				alert("검색오류" + errMsg);
+			} 			
+		}); 
 	});
-	
-	//예약정보 버튼 클릭시 호출
-	$(".infoButton").click(function() {
-		var tr = $(this).parent().parent();
-		var bookingNum = tr.children().eq(0).text();
-		var roomType = tr.children().eq(1).text();
-		var name = tr.children().eq(3).text();
-		$("#bookingNum").val(bookingNum);
-		$("#roomType").val(roomType);
-		$("#name").val(name);
-		document.form.submit();
-	});
+});
+
+//예약정보 버튼 클릭시 호출
+$(document).on("click", ".infoButton", function() {
+	var tr = $(this).parent().parent();
+	var bookingNum = tr.children().eq(0).text();
+	var roomType = tr.children().eq(1).text();
+	var name = tr.children().eq(3).text();
+	$("#bookingNum").val(bookingNum);
+	$("#roomType").val(roomType);
+	$("#name").val(name);
+	document.form.submit();
 });
 
 $(function() {	
@@ -105,41 +112,37 @@ $(function() {
 						<div class="panel-body">
 							<div class="form-inline text-center">
 								<div class="form-group">
-									<span> <select class="form-control" id="selectBox">
-											<option>예약번호</option>
-											<option>예약인</option>
-									</select>
-									</span> <input type="text" class="form-control" id="search">
+									<label>예약검색:&nbsp;&nbsp;</label>
+									<input type="text" class="form-control" id="search" maxlength="10" placeholder="예약번호">
 								</div>
 							</div>
 						</div>
 					</div>
 					
-						<table class="table table-hover table-bordered table-condensed" id="table">
-						
-							<tr class="success">
-								<th class="th1">예약번호</th>
-								<th class="th2">객실</th>
-								<th class="th3">숙박일</th>
-								<th class="th4">예약인</th>
-								<th class="th5"></th>
+					<table class="table table-hover table-bordered table-condensed" id="table">
+					
+						<tr class="success">
+							<th class="th1">예약번호</th>
+							<th class="th2">객실</th>
+							<th class="th3">숙박일</th>
+							<th class="th4">예약인</th>
+							<th class="th5"></th>
+						</tr>
+						<tbody>
+						<c:forEach var="list" items="${bookingList}">
+							<tr class="tr1">
+								<td class="td1">${list.bookingNum}</td>
+								<td class="td2">${list.roomType}</td>
+								<td class="td3">${list.checkIn} ~ ${list.checkOut}</td>
+								<td class="td4"><c:choose>
+										<c:when test="${list.userNum == 0}">(비회원) ${list.nuserKname}</c:when>
+										<c:otherwise>${list.userName}</c:otherwise>
+								</c:choose></td>
+								<td class="td5"><button type="button" class="btn btn-success infoButton" id="${list.bookingNum}">예약정보</button></td>
 							</tr>
-							<tbody>
-							<c:forEach var="list" items="${bookingList}">
-							
-								<tr class="tr1">
-									<td class="td1">${list.bookingNum}</td>
-									<td class="td2">${list.roomType}</td>
-									<td class="td3">${list.checkIn} ~ ${list.checkOut}</td>
-									<td class="td4"><c:choose>
-											<c:when test="${list.userNum == 0}">(비회원) ${list.nuserKname}</c:when>
-											<c:otherwise>${list.userName}</c:otherwise>
-									</c:choose></td>
-									<td class="td5"><button type="button" class="btn btn-success infoButton" id="${list.bookingNum}">예약정보</button></td>
-								</tr>
-								</c:forEach>
-							</tbody>
-						</table>
+							</c:forEach>
+						</tbody>
+					</table>
 					<!-- paging -->
 					<div class="paging" style="text-align: center">
 						<ul class="pagination">
@@ -155,7 +158,7 @@ $(function() {
 										<li id="page${i}"><a class="page-link pageNum" href="/hotel/booking/bookingManage?page=${i}">${i}</a></li>
 									</c:when>
 									<c:otherwise>
-										<li style="display:none;" id="page${i}"><a class="page-link pageNum" href="/hotel/booking/bookingManage?page=${i}">${i}</a></li>
+										<li style="display:none;" id="page${i}"></li>
 									</c:otherwise>
 								</c:choose>	
 							</c:forEach>
@@ -163,6 +166,10 @@ $(function() {
 								<c:choose>
 									<c:when test="${page.nowPage+5 > page.maxPage}">
 										<a class="page-link" href="/hotel/booking/bookingManage?page=${page.maxPage}" aria-label="Next"> 
+										<span aria-hidden="true">&raquo;</span></a>
+									</c:when>
+									<c:when test="${page.nowPage%5 == 0}">
+										<a class="page-link" href="/hotel/booking/bookingManage?page=${page.nowPage + 1}" aria-label="Next"> 
 										<span aria-hidden="true">&raquo;</span></a>
 									</c:when>
 									<c:otherwise>

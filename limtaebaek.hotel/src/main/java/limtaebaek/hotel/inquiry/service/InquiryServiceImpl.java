@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import limtaebaek.hotel.common.domain.Page;
 import limtaebaek.hotel.inquiry.dao.InquiryDao;
 import limtaebaek.hotel.inquiry.domain.Inquiry;
 import limtaebaek.hotel.inquiry.domain.InquiryComment;
@@ -16,8 +17,8 @@ public class InquiryServiceImpl implements InquiryService{
 	
 	@Transactional
 	@Override
-	public List<Inquiry> getInquirys() {
-		return inquiryDao.getInquirys();
+	public List<Inquiry> getInquirys(Page page) {
+		return inquiryDao.getInquirys(page);
 	}
 
 	@Override
@@ -64,5 +65,10 @@ public class InquiryServiceImpl implements InquiryService{
 	@Override
 	public int countInquiryTodayNoComent() {
 		return inquiryDao.countInquiryTodayNoComent();
+	}
+
+	@Override
+	public int countInquiry() {
+		return inquiryDao.countInquiry();
 	}
 }

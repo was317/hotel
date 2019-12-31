@@ -22,12 +22,21 @@
       <result column="INQ_CMT_DATE" property="inqCmtDate"/>
    </resultMap>
 
-   <select id="getInquirys" resultMap="inquiryMap">
-      select INQ_NUM,INQ_TITLE,INQ_CONTENT,INQ_DATE,INQ_WRITER,INQ_EMAIL,INQ_PHONE,
-      decode(STATUS, 0, '답변 대기', 1,'처리완료') as STATUS, USER_NUM
-      from INQUIRYS order by INQ_NUM DESC
+   <select id="getInquirys" resultMap="inquiryMap" parameterType="page">
+   		SELECT * 
+		FROM (SELECT  m.*, FLOOR((ROWNUM - 1)/#{limit} + 1) page 
+		      FROM (select INQ_NUM,INQ_TITLE,INQ_CONTENT,INQ_DATE,INQ_WRITER,INQ_EMAIL,INQ_PHONE,
+     				decode(STATUS, 0, '답변 대기', 1,'처리완료') as STATUS, USER_NUM
+    				from INQUIRYS order by INQ_NUM DESC) m                                 
+		     )                                            
+		WHERE page = #{nowPage}
    </select>
 
+   <select id="countInquiry" resultType="int">
+      select count (*)
+      from INQUIRYS
+   </select>
+   
    <select id="getCount" resultMap="inquiryMap">
       select count (*) as count
       from INQUIRYS

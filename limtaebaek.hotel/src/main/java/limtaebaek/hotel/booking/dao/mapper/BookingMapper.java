@@ -25,5 +25,5 @@ public interface BookingMapper {
 	int addAccount(Account account);
 	int countBooking();
 	int countBookingToday();
-	
+	List<Booking> searchBooking(int num);
 }

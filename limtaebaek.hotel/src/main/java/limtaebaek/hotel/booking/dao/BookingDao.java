@@ -25,4 +25,5 @@ public interface BookingDao {
 	int addAccount(Account account);
 	int countBooking();
 	int countBookingToday();
+	List<Booking> searchBooking(int num);
 }

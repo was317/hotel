@@ -146,6 +146,19 @@ public class BookingController {
 		return "booking/manage";
 	}
 	
+	//예약관리 페이지 -> 검색
+	@Transactional
+	@ResponseBody
+	@RequestMapping("/searchBooking")
+	public List<Booking> searchBooking(Model model, @RequestParam(value="num",required=false) String num){
+		if(num == "") num = "1";
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println(num);
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//model.addAttribute("searchBooking", bookingService.searchBooking(Integer.parseInt(num)));
+		return bookingService.searchBooking(Integer.parseInt(num));
+	}
+	
 	//예약관리 -> 예약정보 페이지
 	@Transactional
 	@RequestMapping("/bookingInformation")

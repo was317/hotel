@@ -26,4 +26,5 @@ public interface BookingService {
 	String getOption(Booking booking);
 	int countBooking();
 	int countBookingToday();
+	List<Booking> searchBooking(int num);
 }

@@ -253,6 +253,15 @@ function submit(){
 		}
 	});   
 }
+
+$(function() {	
+	var para = document.location.href.split("page=");
+	var id = "#" + "page" + para[1];
+	if(!para[1])
+		id = "#page1";
+	$(id).addClass('active');
+});
+
 </script>
 </head>
 <body>
@@ -311,22 +320,44 @@ function submit(){
 					</div>
 					<!-- inquirymain 끝 -->
 					<!-- paging -->
-					<div class="paging">
+					<div class="paging" style="text-align: center">
 						<ul class="pagination">
-							<li class="page-item"><a class="page-link" href="#"
-								aria-label="Previous"> <span aria-hidden="true">&laquo;</span></a>
+							<li class="page-item">
+								<c:if test="${page.nowPage-5 > 0}">
+									<a class="page-link" href="/hotel/inquiry/inquiryManage?page=${page.nowPage-5}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span></a>
+								</c:if>
 							</li>
-							<li class="page-item"><a class="page-link" href="#">1</a></li>
-							<li class="page-item"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item"><a class="page-link" href="#">4</a></li>
-							<li class="page-item"><a class="page-link" href="#">5</a></li>
-							<li class="page-item"><a class="page-link" href="#"
-								aria-label="Next"> <span aria-hidden="true">&raquo;</span></a></li>
+							<c:forEach var="i" begin="1" end="${page.maxPage}">
+								<c:choose>
+									<c:when test="${(i>=page.startPage) && (i<=page.endPage)}">
+										<li id="page${i}"><a class="page-link pageNum" href="/hotel/inquiry/inquiryManage?page=${i}">${i}</a></li>
+									</c:when>
+									<c:otherwise>
+										<li style="display:none;" id="page${i}"></li>
+									</c:otherwise>
+								</c:choose>	
+							</c:forEach>
+							<li class="page-item">
+								<c:choose>
+									<c:when test="${page.nowPage+5 > page.maxPage}">
+										<a class="page-link" href="/hotel/inquiry/inquiryManage?page=${page.maxPage}" aria-label="Next"> 
+										<span aria-hidden="true">&raquo;</span></a>
+									</c:when>
+									<c:when test="${page.nowPage%5 == 0}">
+										<a class="page-link" href="/hotel/inquiry/inquiryManage?page=${page.nowPage + 1}" aria-label="Next"> 
+										<span aria-hidden="true">&raquo;</span></a>
+									</c:when>
+									<c:otherwise>
+										<a class="page-link" href="/hotel/inquiry/inquiryManage?page=${page.nowPage + 5}" aria-label="Next"> 
+										<span aria-hidden="true">&raquo;</span></a>
+									</c:otherwise>
+								</c:choose>
+							</li>
 						</ul>
 					</div>
-					<!-- paging 끝 -->
 				</div>
+				<!-- paging 끝 -->
 			</section>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
