@@ -51,18 +51,13 @@ th {
 <script>
 $(document).ready(function(){
 	var ddd = $("#count option:selected").val();
-	//$("#keyword").on("keyup", function() {
 	$("#btnSearch").on("click", function() {
-	var ddd = $("#count option:selected").val();	
-	var value = $("#keyword").val().toLowerCase();	
-	$("#roomTable tbody tr").filter(function() {
-		$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-	
-	});
-	/* $("#roomTable tbody tr").filter(function() {
-		$(this).toggle($(this).text().toLowerCase().indexOf(ddd) > -1)
-	
-	}); */
+		var ddd = $("#count option:selected").val();	
+		var value = $("#keyword").val().toLowerCase();	
+		$("#roomTable tbody tr").filter(function() {
+			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+		
+		});
 	});
 });
 
@@ -88,8 +83,6 @@ var confirm = function(msg, type) {
 	    	 }
 	         });
 	}
-
-	
 	$(function() {
 	   //취소버튼 클릭시 호출
 	   $(".delbtn").click(function () {
@@ -136,22 +129,6 @@ var confirm = function(msg, type) {
 		});
 		   
 	});	
-/*  $(document)ready(function(){ 
-	$("#keyword").on("keyup", function(){
-		
-		var value = $(this).val().toLowerCase();
-	 	if (value == ""){
-			$('#roomTable tbody tr').show();
-		} else{
-			$('#roomTable tbody tr').hide();
-			$("#roomTable tbody tr:contains('"+value+"')").show();
-		} 
-		
-		$("#roomTable").filter(function(){
-			$(this).toggle($(this).text().toLowerCase().indexOf(value)> -1)
-		}); 
-	});
-}); */
 </script>
 </head>
 <body>

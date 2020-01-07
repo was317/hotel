@@ -253,10 +253,6 @@ var alert = function(msg, type) {
                      }
                   });
             });
-
-            //약관내용 로드
-            $("#agreement1").load("agreement1.txt");
-            $("#agreement2").load("agreement2.txt");
          });
    function submit(){   
       var userName = $("#kname").val();
